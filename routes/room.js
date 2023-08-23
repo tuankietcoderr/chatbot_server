@@ -10,7 +10,7 @@ const Chat = require("../model/Chat");
 router.get("/", verifyToken, async (req, res) => {
   try {
     const userId = new toId(req.user_id);
-    const rooms = await Room.find({ userId }).select("-userId");
+    const rooms = await Room.find({ userId }).select("-userId").sort("-_id");
 
     res.status(200).json({
       success: true,
