@@ -3,6 +3,7 @@ const SCHEMA = {
   USERS: "users",
   ROOMS: "rooms",
   CHATS: "chats",
+  SAVES: "saves",
 };
 
 module.exports = SCHEMA;
