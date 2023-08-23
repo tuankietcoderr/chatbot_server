@@ -17,6 +17,11 @@ const ChatSchema = new mongoose.Schema(
       ref: SCHEMA.ROOMS,
     },
 
+    isSaved: {
+      type: Boolean,
+      default: false,
+    },
+
     reference: {
       type: Object,
       default: {

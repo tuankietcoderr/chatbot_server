@@ -2,6 +2,7 @@ const express = require("express");
 const verifyToken = require("../middleware/auth");
 const User = require("../model/User");
 const Save = require("../model/Save");
+const Chat = require("../model/Chat");
 const router = express.Router();
 const toId = require("mongoose").Types.ObjectId;
 
@@ -18,29 +19,97 @@ router.get("/", verifyToken, async (req, res) => {
   }
 });
 
-router.post("/", verifyToken, async (req, res) => {
+router.post("/add", verifyToken, async (req, res) => {
   try {
-    const { roomId, content } = req.body;
-    if (!roomId || !content) {
+    const { chatId } = req.body;
+    if (!chatId) {
       return res
         .status(400)
-        .json({ success: false, message: "Missing roomId or content" });
+        .json({ success: false, message: "Missing chatId" });
     }
 
     const userId = new toId(req.user_id);
-    const _roomId = new toId(roomId);
+    const _chatId = new toId(chatId);
+
+    const chat = await Chat.findById(chatId);
+
+    if (!chat) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Chat not found" });
+    }
+
+    if (chat.isSaved) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Chat already saved" });
+    }
+
+    await chat.updateOne({ isSaved: true });
 
     const newSave = new Save({
       userId,
-      roomId: _roomId,
-      content,
+      chat: _chatId,
     });
+
+    const dataWithPopulate = await newSave.populate("chat");
 
     await newSave.save();
 
-    res.status(200).json({ success: true, message: "Saved", data: newSave });
+    res
+      .status(200)
+      .json({ success: true, message: "Saved", data: dataWithPopulate });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.log(error.message);
+    res.status(500).json({ success: false, message: error });
+  }
+});
+
+router.post("/remove", verifyToken, async (req, res) => {
+  try {
+    const { chatId } = req.body;
+    if (!chatId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing chatId" });
+    }
+
+    const userId = new toId(req.user_id);
+    const _chatId = new toId(chatId);
+
+    const chat = await Chat.findById(chatId);
+
+    if (!chat) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Chat not found" });
+    }
+
+    if (!chat.isSaved) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Chat is not saved" });
+    }
+
+    await chat.updateOne({ isSaved: false });
+
+    const deletedSave = await Save.findOneAndDelete({
+      userId,
+      chat: _chatId,
+    });
+
+    if (!deletedSave) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Save not found" });
+    }
+
+    res
+      .status(200)
+      .json({ success: true, message: "Removed", data: deletedSave });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ success: false, message: error });
   }
 });
 

@@ -7,12 +7,9 @@ const SaveSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: SCHEMA.USERS,
     },
-    roomId: {
+    chat: {
       type: mongoose.Types.ObjectId,
-      ref: SCHEMA.ROOMS,
-    },
-    content: {
-      type: String,
+      ref: SCHEMA.CHATS,
     },
   },
   {
