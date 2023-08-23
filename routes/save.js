@@ -8,7 +8,7 @@ const toId = require("mongoose").Types.ObjectId;
 
 router.get("/", verifyToken, async (req, res) => {
   try {
-    const saved = await Save.find({ userId: req.user_id });
+    const saved = await Save.find({ userId: req.user_id }).populate("chat");
     res.json({
       success: true,
       data: saved,
@@ -65,19 +65,22 @@ router.post("/add", verifyToken, async (req, res) => {
   }
 });
 
-router.post("/remove", verifyToken, async (req, res) => {
+router.delete("/remove/:id", verifyToken, async (req, res) => {
   try {
-    const { chatId } = req.body;
-    if (!chatId) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Missing chatId" });
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ success: false, message: "Missing id" });
     }
 
-    const userId = new toId(req.user_id);
-    const _chatId = new toId(chatId);
+    const save = await Save.findById(id);
 
-    const chat = await Chat.findById(chatId);
+    if (!save) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Save not found" });
+    }
+
+    const chat = await Chat.findById(save.chat);
 
     if (!chat) {
       return res
@@ -93,20 +96,9 @@ router.post("/remove", verifyToken, async (req, res) => {
 
     await chat.updateOne({ isSaved: false });
 
-    const deletedSave = await Save.findOneAndDelete({
-      userId,
-      chat: _chatId,
-    });
+    await save.deleteOne();
 
-    if (!deletedSave) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Save not found" });
-    }
-
-    res
-      .status(200)
-      .json({ success: true, message: "Removed", data: deletedSave });
+    res.status(200).json({ success: true, message: "Removed", data: save });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ success: false, message: error });
