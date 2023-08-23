@@ -8,7 +8,9 @@ const toId = require("mongoose").Types.ObjectId;
 
 router.get("/", verifyToken, async (req, res) => {
   try {
-    const saved = await Save.find({ userId: req.user_id }).populate("chat");
+    const saved = await Save.find({ userId: req.user_id })
+      .populate("chat")
+      .sort({ createdAt: -1 });
     res.json({
       success: true,
       data: saved,
