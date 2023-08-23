@@ -16,6 +16,14 @@ const ChatSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: SCHEMA.ROOMS,
     },
+
+    reference: {
+      type: Object,
+      default: {
+        title: "",
+        link: "",
+      },
+    },
   },
   {
     timestamps: true,

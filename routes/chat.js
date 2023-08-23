@@ -24,7 +24,7 @@ router.get("/", verifyToken, async (req, res) => {
 
 router.post("/send", verifyToken, async (req, res) => {
   try {
-    const { content, isBotChat, roomId } = req.body;
+    const { content, isBotChat, roomId, reference } = req.body;
     if (!content || !roomId)
       return res
         .status(400)
@@ -46,6 +46,7 @@ router.post("/send", verifyToken, async (req, res) => {
       roomId: _roomId,
       content,
       isBotChat,
+      reference,
     });
 
     await newMessage.save();
