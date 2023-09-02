@@ -76,13 +76,6 @@ router.post("/signup", async (req, res) => {
     });
     await newCredential.save();
 
-    const newRoom = new Room({
-      userId: newUser._id,
-      title: "General",
-    });
-
-    await newRoom.save();
-
     const accessToken = jwt.sign(
       { user_id: newUser._id.toString() },
       process.env.JWT_SECRET,
