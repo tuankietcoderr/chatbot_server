@@ -107,4 +107,40 @@ router.delete("/remove/:id", verifyToken, async (req, res) => {
   }
 });
 
+router.delete("/remove/message/:messageId", verifyToken, async (req, res) => {
+  try {
+    const { messageId } = req.params;
+    if (!messageId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing messageId" });
+    }
+
+    const chat = await Chat.findById(messageId);
+
+    if (!chat) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Chat not found" });
+    }
+
+    if (!chat.isSaved) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Chat is not saved" });
+    }
+
+    await chat.updateOne({ isSaved: false });
+
+    const save = await Save.findOne({ chat: messageId });
+
+    await save.deleteOne();
+
+    res.status(200).json({ success: true, message: "Removed", data: save });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ success: false, message: error });
+  }
+});
+
 module.exports = router;
