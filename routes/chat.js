@@ -7,14 +7,13 @@ const verifyToken = require("../middleware/auth");
 const Room = require("../model/Room");
 const Chat = require("../model/Chat");
 
+const INIT_PAGE = 1;
+const INIT_PAGE_SIZE = 10;
+
 router.get("/", verifyToken, async (req, res) => {
   try {
     const roomId = new toId(req.query.roomId);
-    const { page = 1, page_size = 10 } = req.query;
-    const chats = await Chat.find({ roomId })
-      .skip((page - 1) * page_size)
-      .limit(page_size)
-      .sort({ createdAt: -1 });
+    const chats = await Chat.find({ roomId });
 
     res.status(200).json({
       success: true,
