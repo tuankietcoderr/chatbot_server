@@ -23,11 +23,13 @@ const ChatSchema = new mongoose.Schema(
     },
 
     reference: {
-      type: Object,
-      default: {
-        title: "",
-        link: "",
-      },
+      type: [Object],
+      default: [
+        {
+          title: "",
+          link: "",
+        },
+      ],
     },
   },
   {
