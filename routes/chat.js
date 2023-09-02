@@ -10,7 +10,11 @@ const Chat = require("../model/Chat");
 router.get("/", verifyToken, async (req, res) => {
   try {
     const roomId = new toId(req.query.roomId);
-    const chats = await Chat.find({ roomId });
+    const { page = 1, page_size = 10 } = req.query;
+    const chats = await Chat.find({ roomId })
+      .skip((page - 1) * page_size)
+      .limit(page_size)
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
