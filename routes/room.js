@@ -37,7 +37,7 @@ router.post("/create", verifyToken, async (req, res) => {
 
     const newMessage = new Chat({
       roomId: newRoom._id,
-      content: "Hi, you can ask me anything.",
+      answer: "Hi, you can ask me anything.",
       isBotChat: true,
     });
 

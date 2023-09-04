@@ -27,11 +27,11 @@ router.get("/", verifyToken, async (req, res) => {
 
 router.post("/send", verifyToken, async (req, res) => {
   try {
-    const { content, isBotChat, roomId, reference } = req.body;
-    if (!content || !roomId)
+    const { question, roomId, reference, answer } = req.body;
+    if (!roomId)
       return res
         .status(400)
-        .json({ success: false, message: "Missing content or roomId" });
+        .json({ success: false, message: "Missing or roomId" });
 
     const userId = new toId(req.user_id);
     const _roomId = new toId(roomId);
@@ -47,8 +47,8 @@ router.post("/send", verifyToken, async (req, res) => {
     }
     const newMessage = new Chat({
       roomId: _roomId,
-      content,
-      isBotChat,
+      question,
+      answer,
       reference,
     });
 

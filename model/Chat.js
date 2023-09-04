@@ -3,14 +3,11 @@ const SCHEMA = require("./schema-name");
 
 const ChatSchema = new mongoose.Schema(
   {
-    isBotChat: {
-      type: Boolean,
-      default: false,
-      required: true,
-    },
-    content: {
+    answer: {
       type: String,
-      required: true,
+    },
+    question: {
+      type: String,
     },
     roomId: {
       type: mongoose.Schema.Types.ObjectId,
