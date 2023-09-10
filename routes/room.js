@@ -30,7 +30,7 @@ router.post("/create", verifyToken, async (req, res) => {
     const rooms = await Room.find({ userId });
 
     const newRoom = new Room({
-      title: "Phòng " + rooms.length + 1,
+      title: "Phòng " + (rooms.length + 1),
       shortDescription,
       userId,
     });
