@@ -14,7 +14,7 @@ router.get("/", verifyToken, async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: rooms.length > 0 ? "OK" : "No room",
+      message: rooms.length > 0 ? "OK" : "Không có phòng nào",
       data: rooms,
     });
   } catch (error) {
@@ -28,20 +28,12 @@ router.post("/create", verifyToken, async (req, res) => {
 
     const userId = new toId(req.user_id);
     const newRoom = new Room({
-      title: "New room",
+      title: "Phòng mới",
       shortDescription,
       userId,
     });
 
     await newRoom.save();
-
-    const newMessage = new Chat({
-      roomId: newRoom._id,
-      answer: "Hi, you can ask me anything.",
-      isBotChat: true,
-    });
-
-    await newMessage.save();
 
     res.status(200).json({ success: true, message: "Created", data: newRoom });
   } catch (error) {
@@ -63,13 +55,13 @@ router.put("/:roomId", verifyToken, async (req, res) => {
     if (!room) {
       return res
         .status(404)
-        .json({ success: false, message: "Room not found" });
+        .json({ success: false, message: "Không tìm thấy phòng" });
     }
 
     if (room.userId.toString() !== req.user_id)
       return res.status(403).json({
         success: false,
-        message: "You don't have permission to edit this room",
+        message: "Bạn không có quyền chỉnh sửa phòng này",
       });
 
     const update = {
@@ -82,7 +74,7 @@ router.put("/:roomId", verifyToken, async (req, res) => {
     });
     res
       .status(200)
-      .json({ success: true, message: "Updated", data: updatedRoom });
+      .json({ success: true, message: "Đã cập nhật", data: updatedRoom });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -101,7 +93,7 @@ router.delete("/:roomId", verifyToken, async (req, res) => {
     if (!room) {
       return res
         .status(404)
-        .json({ success: false, message: "Room not found" });
+        .json({ success: false, message: "Không tìm thấy phòng" });
     }
 
     if (room.userId.toString() !== req.user_id)
