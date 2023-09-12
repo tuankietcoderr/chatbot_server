@@ -29,11 +29,14 @@ router.post("/create", verifyToken, async (req, res) => {
 
     const userId = new toId(req.user_id);
     const rooms = await Room.find({ userId });
+    const lastRoom = rooms[rooms.length - 1] || {};
+    const lastIndex = lastRoom.index || 0;
 
     const newRoom = new Room({
-      title: "Phòng " + (rooms.length + 1),
+      title: "Phòng " + (lastIndex + 1),
       shortDescription,
       userId,
+      index: lastIndex + 1,
     });
 
     await newRoom.save();

@@ -13,6 +13,10 @@ const RoomSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: SCHEMA.USERS,
   },
+  index: {
+    type: Number,
+    default: 0,
+  },
 });
 
 module.exports = mongoose.model(SCHEMA.ROOMS, RoomSchema);
