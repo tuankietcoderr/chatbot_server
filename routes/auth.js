@@ -62,7 +62,7 @@ router.post("/signup", async (req, res) => {
     if (user)
       return res
         .status(400)
-        .json({ success: false, message: "User already exists" });
+        .json({ success: false, message: "Tên người dùng đã tồn tại" });
 
     const newUser = new User({
       username,
