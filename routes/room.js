@@ -107,7 +107,7 @@ router.delete("/:roomId", verifyToken, async (req, res) => {
     const _roomId = room._id;
     const chats = await Chat.find({ roomId: _roomId });
     for (const chat of chats) {
-      await Save.deleteMany({ chatId: chat._id });
+      await Save.deleteMany({ chat: chat._id });
       await chat.deleteOne();
     }
     await room.deleteOne();
