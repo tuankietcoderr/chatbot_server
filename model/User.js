@@ -12,6 +12,9 @@ const UserSchema = new mongoose.Schema({
   fullName: {
     type: String,
   },
+  email: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model(SCHEMA.USERS, UserSchema);
