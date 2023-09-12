@@ -17,7 +17,7 @@ router.get("/", verifyToken, async (req, res) => {
     if (!user)
       return res
         .status(400)
-        .json({ success: false, message: "User not found" });
+        .json({ success: false, message: "Người dùng không tồn tại" });
     res.json({ success: true, data: user });
   } catch (error) {
     res.status(500).json({ success: false, message: "Internal server error" });
@@ -30,7 +30,7 @@ router.put("/", verifyToken, async (req, res) => {
     if (!user) {
       return res
         .status(400)
-        .json({ success: false, message: "User does not exist" });
+        .json({ success: false, message: "Người dùng không tồn tại" });
     }
     const update = {
       ...user._doc,
@@ -42,7 +42,7 @@ router.put("/", verifyToken, async (req, res) => {
     if (!updatedUser) {
       return res
         .status(400)
-        .json({ success: false, message: "User does not exist" });
+        .json({ success: false, message: "Người dùng không tồn tại" });
     }
     res.json({ success: true, message: "User updated", data: updatedUser });
   } catch {
@@ -103,7 +103,7 @@ router.post("/signin", async (req, res) => {
     if (!user)
       return res
         .status(400)
-        .json({ success: false, message: "User does not exist" });
+        .json({ success: false, message: "Người dùng không tồn tại" });
 
     const credential = await Credential.findOne({
       userId: user._id,
@@ -112,13 +112,11 @@ router.post("/signin", async (req, res) => {
     if (!credential) {
       return res
         .status(400)
-        .json({ success: false, message: "User does not exist" });
+        .json({ success: false, message: "Người dùng không tồn tại" });
     }
 
     if (credential.password !== password) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Wrong password" });
+      return res.status(400).json({ success: false, message: "Sai mật khẩu" });
     }
 
     const accessToken = jwt.sign(
