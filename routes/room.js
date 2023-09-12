@@ -6,6 +6,7 @@ const toId = mongooose.Types.ObjectId;
 const verifyToken = require("../middleware/auth");
 const Room = require("../model/Room");
 const Chat = require("../model/Chat");
+const Save = require("../model/Save");
 
 router.get("/", verifyToken, async (req, res) => {
   try {
@@ -104,8 +105,12 @@ router.delete("/:roomId", verifyToken, async (req, res) => {
         message: "You don't have permission to delete this room",
       });
     const _roomId = room._id;
+    const chats = await Chat.find({ roomId: _roomId });
+    for (const chat of chats) {
+      await Save.deleteMany({ chatId: chat._id });
+      await chat.deleteOne();
+    }
     await room.deleteOne();
-    await Chat.deleteMany({ roomId: _roomId });
 
     res.status(200).json({ success: true, message: "Deleted", data: room });
   } catch (error) {
