@@ -36,7 +36,7 @@ function config(express) {
       extended: false,
     })
   );
-
+  app.set("view engine", "ejs");
   app.use(bodyParser.json());
   app.use(express.json({ limit: "50mb" }));
 

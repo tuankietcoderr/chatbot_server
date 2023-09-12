@@ -251,9 +251,7 @@ router.get("/verify-email", async (req, res) => {
     user.is_email_verified = true;
     await user.save();
 
-    res
-      .status(200)
-      .json({ success: true, message: "Xác thực email thành công" });
+    res.render("email-verified", { email });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
