@@ -274,6 +274,12 @@ router.get("/forgot-password", async (req, res) => {
         .json({ success: false, message: "Người dùng không tồn tại" });
     }
 
+    if (!user.is_email_verified) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Email chưa được xác thực" });
+    }
+
     const credential = await Credential.findOne({ userId: user._id });
     if (!credential) {
       return res
