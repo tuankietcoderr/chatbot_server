@@ -104,10 +104,19 @@ router.post("/signup", async (req, res) => {
       .json({ success: false, message: "Please enter all fields" });
   try {
     const user = await User.findOne({ username });
-    if (user)
+    if (user) {
       return res
         .status(400)
         .json({ success: false, message: "Tên người dùng đã tồn tại" });
+    }
+
+    const emailUser = await User.findOne({ email });
+
+    if (emailUser) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Email đã tồn tại" });
+    }
 
     const newUser = new User({
       username,
@@ -217,7 +226,6 @@ router.delete("/", verifyToken, async (req, res) => {
 router.post("/send-email", async (req, res) => {
   try {
     const { email } = req.query;
-    console.log({ email });
     const hashedEmail = await bcrypt.hash(email, 10);
     sendMail({
       to: email,
