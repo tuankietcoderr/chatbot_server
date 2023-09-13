@@ -150,13 +150,24 @@ router.post("/signup", async (req, res) => {
 });
 
 router.post("/signin", async (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password)
+  const { first_value, password } = req.body;
+  if (!first_value || !password)
     return res
       .status(400)
-      .json({ success: false, message: "Missing username/password" });
+      .json({ success: false, message: "Missing username/email/password" });
   try {
-    const user = await User.findOne({ username });
+    const emailRegex = /\S+@\S+\.\S+/;
+    let query = {};
+    if (!emailRegex.test(first_value)) {
+      query = {
+        username: first_value,
+      };
+    } else {
+      query = {
+        email: first_value,
+      };
+    }
+    const user = await User.findOne(query);
     if (!user)
       return res
         .status(400)
