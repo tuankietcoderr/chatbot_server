@@ -1,3 +1,5 @@
+const rateLimiterUsingThirdParty = require("../middleware/rate-limit");
+
 function config(express) {
   const app = express();
   const dotenv = require("dotenv");
@@ -39,6 +41,7 @@ function config(express) {
   app.set("view engine", "ejs");
   app.use(bodyParser.json());
   app.use(express.json({ limit: "50mb" }));
+  app.use(rateLimiterUsingThirdParty);
 
   return app;
 }
